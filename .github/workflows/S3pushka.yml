@@ -1,4 +1,4 @@
-name: Add File to Bucket
+name: Add File to Bucket (SELECTEL)
 
 on: push
 
@@ -10,10 +10,12 @@ jobs:
     - name: Upload file to bucket / sync
       uses: jakejarvis/s3-sync-action@master
       with:
-        args: --acl public-read --follow-symlinks #--delete
+        args: --acl public-read --follow-symlinks --endpoint-url=https://s3.selcdn.ru #--delete
       env:
-        AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: 'eu-north-1'   # optional: defaults to us-east-1
-        SOURCE_DIR: 'lab'      # optional: defaults to entire repository
+        AWS_S3_BUCKET: web-bundles
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_SELECTEL }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_SELECTEL }}
+        AWS_REGION: 'ru-1a'   
+        SOURCE_DIR: 'lab'      # test dir
+        DEST_DIR: 'webview-catalog' #test
+      
