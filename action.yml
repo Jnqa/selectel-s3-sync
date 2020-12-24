@@ -4,10 +4,14 @@ inputs:
   path:
     description: 'folder to upload'
     requred: true
+  archivename:
+    requred: false
+    description: 'Archive name'
+    default: 'archive'
   version:
     description: 'Version'
     requred: false
-    default: "bad"
+    default: 'bad'
   bundlename:
     description: 'Bundlename'
     requred: true
@@ -26,8 +30,8 @@ runs:
       run: |
         mkdir s3 
         [[ "${{ env.VERSION }}" == "" ]] && distname='latest' || distname=${{ inputs.version }}
-        mv ${{ inputs.dist }}/${{ inputs.dist }}.zip s3/$distname.zip
-        mv ${{ inputs.dist }} s3/$distname
+        mv ${{ inputs.path }}/${{ inputs.archivename }}.zip s3/$distname.zip
+        mv ${{ inputs.path }} s3/$distname
       shell: bash
     - name: REPORT
       run: echo "REPORT:" && ls s3/ && sleep 3
