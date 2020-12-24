@@ -40,7 +40,8 @@ runs:
       run: echo "REPORT:" && ls s3/ && sleep 3
       shell: bash
       
-    - run: echo "ZALIVKA"  
+    - run: echo "ZALIVKA"
+      shell: bash
       
     - name: Print URLs 
       run: |
