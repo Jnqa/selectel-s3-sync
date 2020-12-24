@@ -1,0 +1,53 @@
+name: 'Zipping folder and prepare to upload'
+description: 'no description'
+inputs:
+  path:
+    description: 'folder to upload'
+    requred: true
+  version:
+    description: 'Version'
+    requred: false
+    default: ''
+  bundlename:
+    description: 'Bundlename'
+    requred: true
+outputs:
+  s3:
+    description: "S3 catalog"
+    value: ${{ steps.s3.outputs.s3 }}
+runs:
+  using: "composite"
+  steps: 
+    - name: Get the version
+      run: echo "VERSION=$(echo $GITHUB_REF | cut -d / -f 3 | sed 's/^v-\?//g')" >> $GITHUB_ENV
+      shell: bash
+    - name: Prepare S3 upload
+      id: s3
+      run: |
+        mkdir s3 
+        S3=s3
+        echo "::set-output name=s3::$(echo $S3)"
+        #[[ "${{ inputs.version }}" == "" ]] && distname='latest' || distname=${{ inputs.version }}
+        [[ "${{ env.VERSION }}" == "" ]] && distname='latest' || distname=${{ inputs.version }}
+        mv ${{ inputs.dist }}/${{ inputs.dist }}.zip s3/$distname.zip
+        mv ${{ inputs.dist }} s3/$distname
+      shell: bash
+    - name: REPORT
+      run: echo "REPORT:" && ls s3/ && sleep 3
+      shell: bash
+      
+    - run: echo "ZALIVKA"
+
+      
+      
+    - name: Print URLs 
+      run: |
+        echo "https://6a39d29f-7919-4a2c-b54e-f8066f9effbb.selcdn.net/web-bundles/bundles/${CATALOG}/latest/index.html"
+        echo "https://6a39d29f-7919-4a2c-b54e-f8066f9effbb.selcdn.net/web-bundles/bundles/${CATALOG}/latest.zip"
+        [[ $VERSION != '' ]] &&\
+          echo "https://6a39d29f-7919-4a2c-b54e-f8066f9effbb.selcdn.net/web-bundles/bundles/${CATALOG}/${VERSION}/index.html" &&\
+          echo "https://6a39d29f-7919-4a2c-b54e-f8066f9effbb.selcdn.net/web-bundles/bundles/${CATALOG}/${VERSION}.zip" ||\
+          echo "versions not uploaded"
+      env:
+        CATALOG: ${{inputs.bundlename}}
+        VERSION: ${{env.VERSION}}
