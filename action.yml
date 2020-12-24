@@ -18,15 +18,14 @@ runs:
     - name: Get the version
       run: |
         echo "VERSION=$(echo $GITHUB_REF | cut -d / -f 3 | sed 's/^v-\?//g')" >> $GITHUB_ENV
-        [[ ${{ env.VERSION == "" }}]] && echo "BAD version. Input Version" &&\
+        [[ ${{ env.VERSION }} == "" ]] && echo "BAD version. Input Version" &&\
         echo exit 1 || echo "VERSION=${{ env.VERSION }}"
       shell: bash
     - name: Prepare S3 upload
       id: s3
       run: |
         mkdir s3 
-        #[[ "${{ inputs.version }}" == "" ]] && distname='latest' || distname=${{ inputs.version }}
-        [[ "${{ env.VERSION }}" == "" ]] && distname='latest' || distname=${{ inputs.version }}
+        [[ ${{ env.VERSION }} == "" ]] && distname='latest' || distname=${{ inputs.version }}
         mv ${{ inputs.dist }}/${{ inputs.dist }}.zip s3/$distname.zip
         mv ${{ inputs.dist }} s3/$distname
       shell: bash
