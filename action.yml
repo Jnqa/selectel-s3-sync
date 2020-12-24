@@ -1,54 +1,90 @@
-name: 'Zipping folder and prepare to upload'
-description: 'no description'
+name: 'Upload dir & zip to S3'
+description: ''
 inputs:
+
   path:
     description: 'folder to upload'
     requred: true
+    
   archivename:
-    requred: false
+    requred: true
     description: 'Archive name'
-    default: 'archive'
+    
   version:
     description: 'Version'
-    requred: false
-    default: 'bad'
-  bundlename:
-    description: 'Bundlename'
     requred: true
-  #keys
+    
+  bundlename:
+    description: 'Package/bundle name'
+    requred: true
+    
+  removeAfterUpload:
+    required: false
+    default: false
+    
+  s3dirname:
+    required: false
+    default: 's3'
+    
+  subfolder:
+    required: false
+    default: ""
+    
+  AWS_ACCESS_KEY_ID:
+    required: true
+  AWS_SECRET_ACCESS_KEY:
+    required: true
+        
+  AWS_ACCESS_KEY_ID_SELECTEL:
+    required: true
+  AWS_SECRET_ACCESS_KEY_SELECTEL:
+    required: true
+  
+  
 runs:
   using: "composite"
   steps: 
-    - name: Get the version
-      run: |
-        echo "VERSION=$(echo $GITHUB_REF | cut -d / -f 3 | sed 's/^v-\?//g')" >> $GITHUB_ENV
-        [[ "${{ env.VERSION }}" == "" ]] && echo "BAD version. Input Version" &&\
-        echo exit 1 || echo "VERSION=${{ env.VERSION }}"
-      shell: bash
     - name: Prepare S3 upload
-      id: s3
+      shell: bash
       run: |
-        mkdir s3 
-        [[ "${{ env.VERSION }}" == "" ]] && distname='latest' || distname=${{ inputs.version }}
-        mv ${{ inputs.path }}/${{ inputs.archivename }}.zip s3/$distname.zip
-        mv ${{ inputs.path }} s3/$distname
-      shell: bash
-    - name: REPORT
-      run: echo "REPORT:" && ls s3/ && sleep 3
-      shell: bash
+        mkdir ${{ inputs.s3dirname }}
+        mv ${{ inputs.archivename }} ${{ inputs.s3dirname }}/${{ inputs.version }}.zip
+        mv ${{ inputs.path }} ${{ inputs.s3dirname }}/${{ inputs.version }}
       
-    - run: echo "ZALIVKA"
-      shell: bash
+#     - name: Prepend subfolder with slashes
+#       shell: bash
+#       run: |
+#         [[subfolder]]
+    
+    - name: Upload archive to S3
+      uses: jakejarvis/s3-sync-action@master
+      with:
+        args: --acl public-read --follow-symlinks
+      env:
+        SOURCE_DIR: 's3'
+        DEST_DIR: 'web-bundles/bundles/${{ inputs.bundlename }}'
+        AWS_S3_BUCKET: web-bundles
+        AWS_REGION: 'us-east-2'
+        AWS_ACCESS_KEY_ID: ${{ inputs.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.AWS_SECRET_ACCESS_KEY }}
+
+    - name: Upload archive to S3 SELECTEL
+      uses: jakejarvis/s3-sync-action@master
+      with:
+        args: --acl public-read --follow-symlinks --endpoint-url=https://s3.selcdn.ru
+      env:
+        SOURCE_DIR: 's3'
+        DEST_DIR: 'web-bundles/bundles/${{ inputs.bundlename }}${{ inputs.subfolder }}'
+        AWS_S3_BUCKET: web-bundles
+        AWS_REGION: 'ru-1a'
+        AWS_ACCESS_KEY_ID: ${{ inputs.AWS_ACCESS_KEY_ID_SELECTEL }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.AWS_SECRET_ACCESS_KEY_SELECTEL }}
       
     - name: Print URLs 
-      run: |
-        echo "https://6a39d29f-7919-4a2c-b54e-f8066f9effbb.selcdn.net/web-bundles/bundles/${CATALOG}/latest/index.html"
-        echo "https://6a39d29f-7919-4a2c-b54e-f8066f9effbb.selcdn.net/web-bundles/bundles/${CATALOG}/latest.zip"
-        [[ $VERSION != '' ]] &&\
-          echo "https://6a39d29f-7919-4a2c-b54e-f8066f9effbb.selcdn.net/web-bundles/bundles/${CATALOG}/${VERSION}/index.html" &&\
-          echo "https://6a39d29f-7919-4a2c-b54e-f8066f9effbb.selcdn.net/web-bundles/bundles/${CATALOG}/${VERSION}.zip" ||\
-          echo "versions not uploaded"
-      env:
-        CATALOG: ${{inputs.bundlename}}
-        VERSION: ${{env.VERSION}}
       shell: bash
+      env:
+        CATALOG: ${{ inputs.bundlename }}${{ inputs.subfolder }}
+        VERSION: ${{ inputs.version }}
+      run: |
+          echo "https://6a39d29f-7919-4a2c-b54e-f8066f9effbb.selcdn.net/web-bundles/bundles/${CATALOG}/${VERSION}/index.html"
+          echo "https://6a39d29f-7919-4a2c-b54e-f8066f9effbb.selcdn.net/web-bundles/bundles/${CATALOG}/${VERSION}.zip"
