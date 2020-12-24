@@ -7,7 +7,7 @@ inputs:
   version:
     description: 'Version'
     requred: false
-    default: ''
+    default: "bad"
   bundlename:
     description: 'Bundlename'
     requred: true
@@ -19,7 +19,10 @@ runs:
   using: "composite"
   steps: 
     - name: Get the version
-      run: echo "VERSION=$(echo $GITHUB_REF | cut -d / -f 3 | sed 's/^v-\?//g')" >> $GITHUB_ENV
+      run: |
+        echo "VERSION=$(echo $GITHUB_REF | cut -d / -f 3 | sed 's/^v-\?//g')" >> $GITHUB_ENV
+        [[ ${{ env.VERSION == '' }}]] && echo "BAD version. Input Version" &&\
+        echo exit 1 || echo "VERSION=${{ env.VERSION }}"
       shell: bash
     - name: Prepare S3 upload
       id: s3
@@ -36,9 +39,7 @@ runs:
       run: echo "REPORT:" && ls s3/ && sleep 3
       shell: bash
       
-    - run: echo "ZALIVKA"
-
-      
+    - run: echo "ZALIVKA"  
       
     - name: Print URLs 
       run: |
