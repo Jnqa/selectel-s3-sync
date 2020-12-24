@@ -11,6 +11,7 @@ inputs:
   bundlename:
     description: 'Bundlename'
     requred: true
+  #keys
 outputs:
   s3:
     description: "S3 catalog"
@@ -52,3 +53,4 @@ runs:
       env:
         CATALOG: ${{inputs.bundlename}}
         VERSION: ${{env.VERSION}}
+      shell: bash
