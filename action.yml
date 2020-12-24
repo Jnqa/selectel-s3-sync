@@ -2,7 +2,7 @@ name: 'Upload dir & zip to S3'
 description: ''
 inputs:
 
-  path:
+  dirname:
     description: 'folder to upload'
     requred: true
     
