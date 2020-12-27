@@ -70,19 +70,16 @@ runs:
         unzip awscliv2.zip > /dev/null
         sudo ./aws/install > /dev/null
    
-    - name: test input
-      shell: python
-      run: |
-        print(${{ inputs.AWS_ACCESS_KEY_ID }}[3:])
-
     - name: configuring AMAZON profile
       shell: bash
       run: |
+        chmod 777 ~/.aws/config
         aws configure set aws_access_key_id ${{ inputs.AWS_ACCESS_KEY_ID }} --profile AMAZON
         aws configure set aws_secret_access_key ${{ inputs.AWS_SECRET_ACCESS_KEY }} --profile AMAZON
         aws configure set default.region "${{ inputs.AWS_REGION }}" --profile AMAZON
         aws configure set endpoint-url s3.${{ inputs.AWS_REGION }}.amazonaws.com --profile AMAZON
         aws s3 ls --profile AMAZON || echo "AMAZON: Bad credentials"
+        cat ~/.aws/config
     
     - name: configuring AMAZON without profile
       shell: bash
