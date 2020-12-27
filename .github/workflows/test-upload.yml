@@ -18,7 +18,7 @@ jobs:
         uses: Jnqa/zebruzka@main
         with:
           dirname: s3
-          archivename: archive.zip
+          #archivename: archive.zip
           version: latest
           bucketname: wiz417-bucket #web-bundles
           bundlename: catalog-test
