@@ -70,13 +70,25 @@ runs:
         unzip awscliv2.zip > /dev/null
         sudo ./aws/install > /dev/null
    
-    - name: configuring AMAZON profile
+    # - name: configuring AMAZON profile
+    #   shell: bash
+    #   run: |
+    #     aws configure set aws_access_key_id "${{ inputs.AWS_ACCESS_KEY_ID }}" --profile AMAZON
+    #     aws configure set aws_secret_access_key "${{ inputs.AWS_SECRET_ACCESS_KEY }}" --profile AMAZON
+    #     aws configure set default.region "${{ inputs.AWS_REGION }}" --profile AMAZON
+    #     aws s3 ls --profile AMAZON || echo "AMAZON: Bad credentials"
+    
+    - name: configuring AMAZON without profile
       shell: bash
       run: |
-        aws configure set aws_access_key_id "${{ inputs.AWS_ACCESS_KEY_ID }}" --profile AMAZON
-        aws configure set aws_secret_access_key "${{ inputs.AWS_SECRET_ACCESS_KEY }}" --profile AMAZON
-        aws configure set default.region "${{ inputs.AWS_REGION }}" --profile AMAZON
-        aws s3 ls --profile AMAZON || echo "AMAZON: Bad credentials"
+        aws configure set aws_access_key_id "${{ inputs.AWS_ACCESS_KEY_ID }}"
+        aws configure set aws_secret_access_key "${{ inputs.AWS_SECRET_ACCESS_KEY }}"
+        aws configure set default.region "${{ inputs.AWS_REGION }}"
+        aws s3 ls || echo "AMAZON: Bad credentials"
+
+    - name: Stoppor
+      shell: bash
+      run: exit 1
 
     - name: configuring SELECTEL profile
       shell: bash
