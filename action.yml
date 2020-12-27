@@ -31,7 +31,7 @@ inputs:
     
   subfolder:
     required: false
-    default: ''
+    default: 'null'
     
   AWS_ACCESS_KEY_ID:
     required: true
@@ -42,77 +42,79 @@ inputs:
     default: 'us-east-2'
         
   AWS_ACCESS_KEY_ID_SELECTEL:
-    required: true
+    required: false
+    default: 'null'
   AWS_SECRET_ACCESS_KEY_SELECTEL:
-    required: true
-  SELECTEL_ENDPOINT:
+    required: false
+    default: 'null'
+  ENDPOINT:
     required: false
     default: 'https://s3.selcdn.ru' # --endpoint-url=
+  SELECTEL_URL:
+    required: false
+    default: ''
 
 runs:
   using: "composite"
   steps: 
-    # - name: Prepare S3 upload
-    #   shell: bash
-    #   run: |
-    #     mkdir ${{ inputs.s3dirname }}
-    #     mv ${{ inputs.archivename }} ${{ inputs.s3dirname }}/${{ inputs.version }}.zip
-    #     mv ${{ inputs.s3dirname }} ${{ inputs.s3dirname }}/${{ inputs.version }}
-      
-#     - name: Prepend subfolder with slashes
-#       shell: bash
-#       run: |
-#         [[subfolder]]
-    - name: Prepare awscliv2 for next step
+
+    - name: Prepend subfolder with slashes
+      shell: bash
+      run: |
+        [[ ${{ inputs.subfolder }} != 'null' ]] &&\
+        ${{ inputs.bundlename }}=${{inputs.bundlename}}/${{inputs.subfolder}}
+
+    - name: Prepare awscliv2 for the next steps
       shell: bash
       run: |
         curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
         unzip awscliv2.zip > /dev/null
         sudo ./aws/install > /dev/null
+   
+    - name: configuring SELECTEL profile
+      shell: bash
+      run: |
+        aws configure set aws_access_key_id ${{ inputs.AWS_ACCESS_KEY_ID }} --profile SELECTEL
+        aws configure set aws_secret_access_key ${{ inputs.AWS_SECRET_ACCESS_KEY }} --profile SELECTEL
+        aws configure set default.region ru-1a --profile SELECTEL
+        aws configure set endpoint-url ${{ inputs.ENDPOINT }} --profile SELECTEL
+    
+    - name: configuring AMAZON profile
+      shell: bash
+      run: |
+        aws configure set aws_access_key_id ${{ inputs.AWS_ACCESS_KEY_ID }} --profile AMAZON
+        aws configure set aws_secret_access_key ${{ inputs.AWS_SECRET_ACCESS_KEY }} --profile AMAZON
+        aws configure set default.region ${{ inputs.AWS_REGION }} --profile AMAZON
+    
     - name: Upload to S3
       shell: bash
       run: |
-        aws configure set aws_access_key_id ${{ inputs.AWS_ACCESS_KEY_ID }}
-        aws configure set aws_secret_access_key ${{ inputs.AWS_SECRET_ACCESS_KEY }}
-        aws configure set default.region ${{ inputs.AWS_REGION }}
-        echo 'Uploading..'
         [[ "${{ inputs.archivename }}" != "null" ]] &&\
-        (aws s3 cp ./${{ inputs.dirname }}/${{ inputs.archivename }} s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}/${{ inputs.version }}.zip ||\
+        (aws s3 cp ./${{ inputs.dirname }}/${{ inputs.archivename }}\
+         s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}/${{ inputs.version }}.zip --profile AMAZON ||\
         echo "no ./${{ inputs.dirname }}/${{ inputs.archivename }}" && echo exit 1)
-        aws s3 cp ./${{ inputs.dirname }}/ s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}/ --recursive --include "*" --exclude "${{ inputs.archivename }}" 
+        echo "AMAZON Uploaded: s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}/${{ inputs.version }}.zip"
+        [[ "${{ inputs.archivename }}" != "null" ]] &&\
+        [[ "${{ inputs.AWS_ACCESS_KEY_ID_SELECTEL }}" != "null" ]] &&\
+        [[ "${{ inputs.AWS_SECRET_ACCESS_KEY_SELECTEL }}" != "null" ]] &&\
+        (aws s3 cp ./${{ inputs.dirname }}/${{ inputs.archivename }}\
+         s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}/${{ inputs.version }}.zip --profile SELECTEL ||\
+        echo "no ./${{ inputs.dirname }}/${{ inputs.archivename }}" && echo exit 1)
+        echo "SELECTEL Uploaded: s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}/${{ inputs.version }}.zip"
+        aws s3 cp ./${{ inputs.dirname }}/ s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}/ --recursive --include "*" --exclude "${{ inputs.archivename }} --profile AMAZON" 
+        echo "AMAZON Uploaded: s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}/ --recursive --include "*" --exclude "${{ inputs.archivename }}"
+        [[ "${{ inputs.AWS_ACCESS_KEY_ID_SELECTEL }}" != "null" ]] &&\
+        [[ "${{ inputs.AWS_SECRET_ACCESS_KEY_SELECTEL }}" != "null" ]] &&\
+        aws s3 cp ./${{ inputs.dirname }}/ s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}/ --recursive --include "*" --exclude "${{ inputs.archivename }} --profile SELECTEL" 
+        echo "SELECTEL Uploaded: s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}/ --recursive --include "*" --exclude "${{ inputs.archivename }}"
         echo 'Complete!'
-
-
-
-    # - name: Upload archive to S3
-    #   uses: jakejarvis/s3-sync-action@master
-    #   with:
-    #     args: --acl public-read --follow-symlinks
-    #   env:
-    #     SOURCE_DIR: 's3'
-    #     DEST_DIR: 'web-bundles/bundles/${{ inputs.bundlename }}'
-    #     AWS_S3_BUCKET: web-bundles
-    #     AWS_REGION: 'us-east-2'
-    #     AWS_ACCESS_KEY_ID: ${{ inputs.AWS_ACCESS_KEY_ID }}
-    #     AWS_SECRET_ACCESS_KEY: ${{ inputs.AWS_SECRET_ACCESS_KEY }}
-
-    # - name: Upload archive to S3 SELECTEL
-    #   uses: jakejarvis/s3-sync-action@master
-    #   with:
-    #     args: --acl public-read --follow-symlinks --endpoint-url=https://s3.selcdn.ru
-    #   env:
-    #     SOURCE_DIR: 's3'
-    #     DEST_DIR: 'web-bundles/bundles/${{ inputs.bundlename }}${{ inputs.subfolder }}'
-    #     AWS_S3_BUCKET: web-bundles
-    #     AWS_REGION: 'ru-1a'
-    #     AWS_ACCESS_KEY_ID: ${{ inputs.AWS_ACCESS_KEY_ID_SELECTEL }}
-    #     AWS_SECRET_ACCESS_KEY: ${{ inputs.AWS_SECRET_ACCESS_KEY_SELECTEL }}
       
     - name: Print URLs 
       shell: bash
-      env:
-        CATALOG: ${{ inputs.bundlename }}/${{ inputs.subfolder }}
-        VERSION: ${{ inputs.version }}
       run: |
-          echo "https://6a39d29f-7919-4a2c-b54e-f8066f9effbb.selcdn.net/web-bundles/bundles/${CATALOG}/${VERSION}/index.html"
-          echo "https://6a39d29f-7919-4a2c-b54e-f8066f9effbb.selcdn.net/web-bundles/bundles/${CATALOG}/${VERSION}.zip"
+        echo "${{ inputs.SELECTEL_URL }}/${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}/index.html"
+        echo "${{ inputs.SELECTEL_URL }}/${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}.zip"
+        echo " - - - "
+        echo "https://${{ inputs.bucketname }}.s3.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}/index.html"
+        echo "https://${{ inputs.bucketname }}.s3.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}.zip"
+
