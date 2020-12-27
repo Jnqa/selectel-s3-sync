@@ -57,10 +57,6 @@ inputs:
 runs:
   using: "composite"
   steps: 
-    - name: Debug
-      shell: python
-      run: |
-        print('It starts!')
     - name: Prepend subfolder with slashes
       shell: bash
       run: |
@@ -68,9 +64,6 @@ runs:
         echo "BUNDLENAME=${{ inputs.bundlename }}/${{ inputs.subfolder }}" >> $GITHUB_ENV ||\
         echo "BUNDLENAME=${{ inputs.bundlename }}" >> $GITHUB_ENV
         echo ${{env.BUNDLENAME}}
-      shell: python
-      run: |
-        print('Step 2:\n Prepare AWS')
     - name: Prepare awscliv2 for the next steps
       shell: bash
       run: |
