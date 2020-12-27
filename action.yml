@@ -63,7 +63,6 @@ runs:
         [[ ${{ inputs.subfolder }} != 'null' ]] &&\
         echo "BUNDLENAME=${{ inputs.bundlename }}/${{ inputs.subfolder }}" >> $GITHUB_ENV ||\
         echo "BUNDLENAME=${{ inputs.bundlename }}" >> $GITHUB_ENV
-        echo ${{env.BUNDLENAME}}
     - name: Prepare awscliv2 for the next steps
       shell: bash
       run: |
@@ -74,7 +73,6 @@ runs:
     - name: configuring SELECTEL profile
       shell: bash
       run: |
-        echo "conf S"
         aws configure set aws_access_key_id ${{ inputs.AWS_ACCESS_KEY_ID }} --profile SELECTEL
         aws configure set aws_secret_access_key ${{ inputs.AWS_SECRET_ACCESS_KEY }} --profile SELECTEL
         aws configure set default.region ru-1a --profile SELECTEL
@@ -83,7 +81,6 @@ runs:
     - name: configuring AMAZON profile
       shell: bash
       run: |
-        echo "conf A"
         aws configure set aws_access_key_id ${{ inputs.AWS_ACCESS_KEY_ID }} --profile AMAZON
         aws configure set aws_secret_access_key ${{ inputs.AWS_SECRET_ACCESS_KEY }} --profile AMAZON
         aws configure set default.region ${{ inputs.AWS_REGION }} --profile AMAZON
@@ -91,20 +88,19 @@ runs:
     - name: Upload to S3
       shell: bash
       run: |
-        echo "UPLOAD"
-        echo ${{env.BUNDLENAME}}
         [[ "${{ inputs.archivename }}" != "null" ]] &&\
         (aws s3 cp ./${{ inputs.dirname }}/${{ inputs.archivename }}\
-         s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/${{ inputs.version }}.zip --profile AMAZON ||\
+         s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/${{ inputs.version }}.zip --profile AMAZON &&\
+         echo "AMAZON Uploaded: s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/${{ inputs.version }}.zip" ||\
         echo "no ./${{ inputs.dirname }}/${{ inputs.archivename }}" && echo exit 1)
-        echo "AMAZON Uploaded: s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/${{ inputs.version }}.zip"
+        echo Upload
         [[ "${{ inputs.archivename }}" != "null" ]] &&\
         [[ "${{ inputs.AWS_ACCESS_KEY_ID_SELECTEL }}" != "null" ]] &&\
         [[ "${{ inputs.AWS_SECRET_ACCESS_KEY_SELECTEL }}" != "null" ]] &&\
         (aws s3 cp ./${{ inputs.dirname }}/${{ inputs.archivename }}\
-         s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/${{ inputs.version }}.zip --profile SELECTEL ||\
+         s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/${{ inputs.version }}.zip --profile SELECTEL &&\
+         echo "SELECTEL Uploaded: s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/${{ inputs.version }}.zip" ||\
         echo "no ./${{ inputs.dirname }}/${{ inputs.archivename }}" && echo exit 1)
-        echo "SELECTEL Uploaded: s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/${{ inputs.version }}.zip"
         aws s3 cp ./${{ inputs.dirname }}/ s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/ --recursive --include "*" --exclude "${{ inputs.archivename }} --profile AMAZON" 
         echo "AMAZON Uploaded: s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/ --recursive --include "*" --exclude "${{ inputs.archivename }}"
         [[ "${{ inputs.AWS_ACCESS_KEY_ID_SELECTEL }}" != "null" ]] &&\
