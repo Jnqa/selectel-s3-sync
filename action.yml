@@ -88,15 +88,15 @@ runs:
          echo 'AMAZON Uploaded: s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/${{ inputs.version }}.zip' ||\
         echo "no ./${{ inputs.dirname }}/${{ inputs.archivename }}" && echo exit 1)
         aws s3 cp ./${{ inputs.dirname }}/ s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/ --recursive --include "*" --exclude "${{ inputs.archivename }}" 
-        echo 'AMAZON Uploaded: s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/ --recursive --include "*" --exclude "${{ inputs.archivename }}'
+        echo 'AMAZON Uploaded: s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/'
       
     - name: configuring SELECTEL profile
       shell: bash
       run: |
         aws configure set aws_access_key_id "${{ inputs.AWS_ACCESS_KEY_ID_SELECTEL }}" 
         aws configure set aws_secret_access_key "${{ inputs.AWS_SECRET_ACCESS_KEY_SELECTEL }}" 
-        aws configure set default.region ru-1a 
         aws configure set endpoint-url "${{ inputs.ENDPOINT }}" 
+        aws configure set default.region ru-1a 
         aws s3 ls || echo "SELECTEL: Bad credentials"
 
     - name: Upload to S3 SELECTEL
@@ -112,7 +112,8 @@ runs:
         [[ "${{ inputs.AWS_ACCESS_KEY_ID_SELECTEL }}" != "null" ]] &&\
         [[ "${{ inputs.AWS_SECRET_ACCESS_KEY_SELECTEL }}" != "null" ]] &&\
         aws s3 cp ./${{ inputs.dirname }}/ s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/ --recursive --include "*" --exclude "${{ inputs.archivename }}" 
-        echo "SELECTEL Uploaded: s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/ --recursive --include "*" --exclude "${{ inputs.archivename }}"
+        echo de
+        echo "SELECTEL Uploaded: s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/"
 
     - name: Print URLs 
       shell: bash
