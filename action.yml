@@ -78,7 +78,7 @@ runs:
         aws configure set aws_secret_access_key ${{ inputs.AWS_SECRET_ACCESS_KEY }} --profile AMAZON
         aws configure set default.region "${{ inputs.AWS_REGION }}" --profile AMAZON
         aws configure set endpoint-url s3.${{ inputs.AWS_REGION }}.amazonaws.com --profile AMAZON
-        aws s3 ls --profile AMAZON || echo "A: Bad credentials"
+        aws s3 ls --profile AMAZON || echo "AMAZON: Bad credentials"
         cd ../
     
     - name: configuring AMAZON without profile
