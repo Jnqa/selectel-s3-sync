@@ -80,7 +80,7 @@ runs:
         (aws s3 cp ./${{ inputs.dirname }}/${{ inputs.archivename }} s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}/${{ inputs.version }}.zip ||\
         echo "no ./${{ inputs.dirname }}/${{ inputs.archivename }}" && echo exit 1)
         aws s3 cp ./${{ inputs.dirname }}/ s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}/ --recursive --exclude "${{ inputs.archivename }}" --include "*"
-
+        echo 'Complete!'
 
 
 
