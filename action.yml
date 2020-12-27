@@ -73,7 +73,8 @@ runs:
     - name: configuring AMAZON profile
       shell: bash
       run: |
-        chmod 777 ~/.aws/config
+        chmod 777 ~/
+        touch ~/.aws/config
         aws configure set aws_access_key_id ${{ inputs.AWS_ACCESS_KEY_ID }} --profile AMAZON
         aws configure set aws_secret_access_key ${{ inputs.AWS_SECRET_ACCESS_KEY }} --profile AMAZON
         aws configure set default.region "${{ inputs.AWS_REGION }}" --profile AMAZON
