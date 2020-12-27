@@ -70,7 +70,7 @@ runs:
         unzip awscliv2.zip > /dev/null
         sudo ./aws/install > /dev/null
     
-    - name: configuring AMAZON without profile
+    - name: configuring AMAZON profile
       shell: bash
       run: |
         aws configure set aws_access_key_id "${{ inputs.AWS_ACCESS_KEY_ID }}"
@@ -84,10 +84,10 @@ runs:
       run: |
         [[ "${{ inputs.archivename }}" != "null" ]] &&\
         (aws s3 cp ./${{ inputs.dirname }}/${{ inputs.archivename }}\
-         s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/${{ inputs.version }}.zip --profile AMAZON &&\
+         s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/${{ inputs.version }}.zip &&\
          echo "AMAZON Uploaded: s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/${{ inputs.version }}.zip" ||\
         echo "no ./${{ inputs.dirname }}/${{ inputs.archivename }}" && echo exit 1)
-        aws s3 cp ./${{ inputs.dirname }}/ s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/ --recursive --include "*" --exclude "${{ inputs.archivename }} --profile AMAZON" 
+        aws s3 cp ./${{ inputs.dirname }}/ s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/ --recursive --include "*" --exclude "${{ inputs.archivename }}" 
         echo "AMAZON Uploaded: s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/ --recursive --include "*" --exclude "${{ inputs.archivename }}"
       
     - name: configuring SELECTEL profile
@@ -106,12 +106,12 @@ runs:
         [[ "${{ inputs.AWS_ACCESS_KEY_ID_SELECTEL }}" != "null" ]] &&\
         [[ "${{ inputs.AWS_SECRET_ACCESS_KEY_SELECTEL }}" != "null" ]] &&\
         (aws s3 cp ./${{ inputs.dirname }}/${{ inputs.archivename }}\
-         s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/${{ inputs.version }}.zip --profile SELECTEL &&\
+         s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/${{ inputs.version }}.zip &&\
          echo "SELECTEL Uploaded: s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/${{ inputs.version }}.zip" ||\
         echo "no ./${{ inputs.dirname }}/${{ inputs.archivename }}" && echo exit 1)
         [[ "${{ inputs.AWS_ACCESS_KEY_ID_SELECTEL }}" != "null" ]] &&\
         [[ "${{ inputs.AWS_SECRET_ACCESS_KEY_SELECTEL }}" != "null" ]] &&\
-        aws s3 cp ./${{ inputs.dirname }}/ s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/ --recursive --include "*" --exclude "${{ inputs.archivename }} --profile SELECTEL" 
+        aws s3 cp ./${{ inputs.dirname }}/ s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/ --recursive --include "*" --exclude "${{ inputs.archivename }}" 
         echo "SELECTEL Uploaded: s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/ --recursive --include "*" --exclude "${{ inputs.archivename }}"
 
     - name: Print URLs 
