@@ -74,8 +74,8 @@ runs:
         aws configure set aws_secret_access_key ${{ inputs.AWS_SECRET_ACCESS_KEY }}
         aws configure set default.region ${{ inputs.AWS_REGION }}
         sleep 2
-        aws s3 cp "./${{ inputs.dirname }}/*" "s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/" ||\
-        echo 'aws s3 cp "./${{ inputs.dirname }}/*" "s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}"'
+        aws s3 cp ./${{ inputs.dirname }}/* s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/ ||\
+        echo 'aws s3 cp ./${{ inputs.dirname }}/* s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}'
 
 
 
