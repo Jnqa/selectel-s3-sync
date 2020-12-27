@@ -19,7 +19,7 @@ jobs:
         with:
           dirname: s3
           archivename: archive.zip
-          version: latest1
+          version: latest
           bucketname: jnqa-test #wiz417-bucket #web-bundles 
           bundlename: catalog-test
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
