@@ -101,6 +101,7 @@ runs:
          s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/${{ inputs.version }}.zip --profile SELECTEL &&\
          echo "SELECTEL Uploaded: s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/${{ inputs.version }}.zip" ||\
         echo "no ./${{ inputs.dirname }}/${{ inputs.archivename }}" && echo exit 1)
+        echo folders
         aws s3 cp ./${{ inputs.dirname }}/ s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/ --recursive --include "*" --exclude "${{ inputs.archivename }} --profile AMAZON" 
         echo "AMAZON Uploaded: s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/ --recursive --include "*" --exclude "${{ inputs.archivename }}"
         [[ "${{ inputs.AWS_ACCESS_KEY_ID_SELECTEL }}" != "null" ]] &&\
