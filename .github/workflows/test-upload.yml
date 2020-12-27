@@ -17,7 +17,7 @@ jobs:
       - name: Upload archive to S3
         uses: Jnqa/zebruzka@main
         with:
-          #dirname: s3
+          dirname: s3
           archivename: archive.zip
           version: latest
           bucketname: wiz417-bucket #web-bundles
