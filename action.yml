@@ -77,6 +77,7 @@ runs:
         aws configure set aws_secret_access_key ${{ inputs.AWS_SECRET_ACCESS_KEY_SELECTEL }} --profile SELECTEL
         aws configure set default.region ru-1a --profile SELECTEL
         aws configure set endpoint-url ${{ inputs.ENDPOINT }} --profile SELECTEL
+        aws s3 ls --profile SELECTEL || echo "Bad credentials"
     
     - name: configuring AMAZON profile
       shell: bash
