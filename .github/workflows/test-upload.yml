@@ -4,7 +4,7 @@ name: Build & upload latest WebView-bundle
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
