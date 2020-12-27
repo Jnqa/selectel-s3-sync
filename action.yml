@@ -65,7 +65,9 @@ runs:
       shell: bash
       run: |
         [[ ${{ inputs.subfolder }} != 'null' ]] &&\
-        ${{ inputs.bundlename }}=${{ inputs.bundlename }}/${{inputs.subfolder}}
+        echo BUNDLENAME=${{ inputs.bundlename }}/${{inputs.subfolder}} >> GITHUB_ENV ||\
+        echo BUNDLENAME=${{ inputs.bundlename }} >> GITHUB_ENV
+        print ${{env.BUNDLENAME}} && exit 1
     - name: Debug
       shell: python
       run: |
