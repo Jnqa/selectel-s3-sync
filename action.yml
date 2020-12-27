@@ -4,7 +4,8 @@ inputs:
 
   dirname:
     description: 'folder to upload'
-    requred: true
+    required: false
+    default: 's3'
     
   archivename:
     requred: true
@@ -13,7 +14,12 @@ inputs:
   version:
     description: 'Version'
     requred: true
-    
+  
+  bucketname:
+    description: 'Bucket name'
+    requred: true
+    default: 'web-bundles'
+
   bundlename:
     description: 'Package/bundle name'
     requred: true
@@ -22,18 +28,17 @@ inputs:
     required: false
     default: false
     
-  s3dirname:
-    required: false
-    default: 's3'
-    
   subfolder:
     required: false
-    default: ""
+    default: ''
     
   AWS_ACCESS_KEY_ID:
     required: true
   AWS_SECRET_ACCESS_KEY:
     required: true
+  AWS_REGION:
+    required: false
+    default: 'us-east-2'
         
   AWS_ACCESS_KEY_ID_SELECTEL:
     required: true
@@ -44,46 +49,62 @@ inputs:
 runs:
   using: "composite"
   steps: 
-    - name: Prepare S3 upload
-      shell: bash
-      run: |
-        mkdir ${{ inputs.s3dirname }}
-        mv ${{ inputs.archivename }} ${{ inputs.s3dirname }}/${{ inputs.version }}.zip
-        mv ${{ inputs.path }} ${{ inputs.s3dirname }}/${{ inputs.version }}
+    # - name: Prepare S3 upload
+    #   shell: bash
+    #   run: |
+    #     mkdir ${{ inputs.s3dirname }}
+    #     mv ${{ inputs.archivename }} ${{ inputs.s3dirname }}/${{ inputs.version }}.zip
+    #     mv ${{ inputs.s3dirname }} ${{ inputs.s3dirname }}/${{ inputs.version }}
       
 #     - name: Prepend subfolder with slashes
 #       shell: bash
 #       run: |
 #         [[subfolder]]
-    
-    - name: Upload archive to S3
-      uses: jakejarvis/s3-sync-action@master
-      with:
-        args: --acl public-read --follow-symlinks
-      env:
-        SOURCE_DIR: 's3'
-        DEST_DIR: 'web-bundles/bundles/${{ inputs.bundlename }}'
-        AWS_S3_BUCKET: web-bundles
-        AWS_REGION: 'us-east-2'
-        AWS_ACCESS_KEY_ID: ${{ inputs.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ inputs.AWS_SECRET_ACCESS_KEY }}
+    - name: Prepare awscliv2 for next step
+      shell: bash
+      run: |
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+        sudo ./aws/install
+    - name: Upload to S3
+      shell: bash
+      run: |
+        aws configure set aws_access_key_id ${{ inputs.AWS_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ inputs.AWS_SECRET_ACCESS_KEY }}
+        aws configure set default.region ${{ inputs.AWS_REGION }}
+        aws s3 cp ./${{ inputs.s3dirname }}/* s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/
 
-    - name: Upload archive to S3 SELECTEL
-      uses: jakejarvis/s3-sync-action@master
-      with:
-        args: --acl public-read --follow-symlinks --endpoint-url=https://s3.selcdn.ru
-      env:
-        SOURCE_DIR: 's3'
-        DEST_DIR: 'web-bundles/bundles/${{ inputs.bundlename }}${{ inputs.subfolder }}'
-        AWS_S3_BUCKET: web-bundles
-        AWS_REGION: 'ru-1a'
-        AWS_ACCESS_KEY_ID: ${{ inputs.AWS_ACCESS_KEY_ID_SELECTEL }}
-        AWS_SECRET_ACCESS_KEY: ${{ inputs.AWS_SECRET_ACCESS_KEY_SELECTEL }}
+
+
+
+    # - name: Upload archive to S3
+    #   uses: jakejarvis/s3-sync-action@master
+    #   with:
+    #     args: --acl public-read --follow-symlinks
+    #   env:
+    #     SOURCE_DIR: 's3'
+    #     DEST_DIR: 'web-bundles/bundles/${{ inputs.bundlename }}'
+    #     AWS_S3_BUCKET: web-bundles
+    #     AWS_REGION: 'us-east-2'
+    #     AWS_ACCESS_KEY_ID: ${{ inputs.AWS_ACCESS_KEY_ID }}
+    #     AWS_SECRET_ACCESS_KEY: ${{ inputs.AWS_SECRET_ACCESS_KEY }}
+
+    # - name: Upload archive to S3 SELECTEL
+    #   uses: jakejarvis/s3-sync-action@master
+    #   with:
+    #     args: --acl public-read --follow-symlinks --endpoint-url=https://s3.selcdn.ru
+    #   env:
+    #     SOURCE_DIR: 's3'
+    #     DEST_DIR: 'web-bundles/bundles/${{ inputs.bundlename }}${{ inputs.subfolder }}'
+    #     AWS_S3_BUCKET: web-bundles
+    #     AWS_REGION: 'ru-1a'
+    #     AWS_ACCESS_KEY_ID: ${{ inputs.AWS_ACCESS_KEY_ID_SELECTEL }}
+    #     AWS_SECRET_ACCESS_KEY: ${{ inputs.AWS_SECRET_ACCESS_KEY_SELECTEL }}
       
     - name: Print URLs 
       shell: bash
       env:
-        CATALOG: ${{ inputs.bundlename }}${{ inputs.subfolder }}
+        CATALOG: ${{ inputs.bundlename }}/${{ inputs.subfolder }}
         VERSION: ${{ inputs.version }}
       run: |
           echo "https://6a39d29f-7919-4a2c-b54e-f8066f9effbb.selcdn.net/web-bundles/bundles/${CATALOG}/${VERSION}/index.html"
