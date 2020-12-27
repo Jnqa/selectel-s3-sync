@@ -10,7 +10,7 @@ inputs:
   archivename:
     requred: false
     description: 'Archive name'
-    default: null
+    default: 'null'
 
   version:
     description: 'Version'
@@ -77,7 +77,7 @@ runs:
         aws configure set default.region ${{ inputs.AWS_REGION }}
         echo 'Uploading..'
         [[ ${{ inputs.archivename }} != '' ]] &&\
-        (aws s3 mv ./${{ inputs.dirname }}/${{ inputs.archivename }} s3://${{ inputs.bucketname }}/bundles/${{ inputs.version }}.zip ||\
+        (aws s3 mv ./${{ inputs.dirname }}/${{ inputs.archivename }} s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}.zip ||\
         echo "no ./${{ inputs.dirname }}/${{ inputs.archivename }}" && echo exit 1 ) || echo "archive is null" 
         sleep 2
         aws s3 cp ./${{ inputs.dirname }}/* s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/    
