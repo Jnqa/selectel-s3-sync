@@ -47,8 +47,8 @@ inputs:
     required: true
   SELECTEL_ENDPOINT:
     required: false
-    default: https://s3.selcdn.ru # --endpoint-url=
-  
+    default: 'https://s3.selcdn.ru' # --endpoint-url=
+
 runs:
   using: "composite"
   steps: 
@@ -75,11 +75,12 @@ runs:
         aws configure set aws_access_key_id ${{ inputs.AWS_ACCESS_KEY_ID }}
         aws configure set aws_secret_access_key ${{ inputs.AWS_SECRET_ACCESS_KEY }}
         aws configure set default.region ${{ inputs.AWS_REGION }}
-        sleep 2
-        aws s3 cp ./${{ inputs.dirname }}/* s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}
+        echo 'Uploading..'
         [[ ${{ inputs.archivename }} != null ]] &&\
-        (aws s3 cp ./${{ inputs.dirname }}/${{ inputs.archivename }} s3://${{ inputs.bucketname }}/bundles/${{ inputs.version }}.zip ||\
-        echo "no ./${{ inputs.dirname }}/${{ inputs.archivename }}" && echo exit 1 ) || echo "archive is null"        
+        (aws s3 mv ./${{ inputs.dirname }}/${{ inputs.archivename }} s3://${{ inputs.bucketname }}/bundles/${{ inputs.version }}.zip ||\
+        echo "no ./${{ inputs.dirname }}/${{ inputs.archivename }}" && echo exit 1 ) || echo "archive is null" 
+        sleep 2
+        aws s3 cp ./${{ inputs.dirname }}/* s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}       
 
 
 
