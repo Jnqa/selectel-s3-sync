@@ -67,8 +67,7 @@ runs:
         [[ ${{ inputs.subfolder }} != 'null' ]] &&\
         echo "BUNDLENAME=${{ inputs.bundlename }}/${{ inputs.subfolder }}" >> $GITHUB_ENV ||\
         echo "BUNDLENAME=${{ inputs.bundlename }}" >> $GITHUB_ENV
-        echo "Check"
-        print ${{env.BUNDLENAME}} && exit 1
+        echo ${{env.BUNDLENAME}} && exit 1
     - name: Debug
       shell: python
       run: |
