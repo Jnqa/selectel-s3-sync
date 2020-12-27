@@ -77,7 +77,7 @@ runs:
         aws configure set default.region ${{ inputs.AWS_REGION }}
         echo 'Uploading..'
         [[ "${{ inputs.archivename }}" != "null" ]] &&\
-        aws s3 mv ./${{ inputs.dirname }}/${{ inputs.archivename }} s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}/${{ inputs.version }}.zip ||\
+        (aws s3 mv ./${{ inputs.dirname }}/${{ inputs.archivename }} s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}/${{ inputs.version }}.zip ||\
         echo "no ./${{ inputs.dirname }}/${{ inputs.archivename }}" && echo exit 1)
         echo checkpoint2
         aws s3 cp ./${{ inputs.dirname }}/* s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}/    
