@@ -65,8 +65,11 @@ runs:
       shell: bash
       run: |
         [[ ${{ inputs.subfolder }} != 'null' ]] &&\
-        ${{ inputs.bundlename }}=${{inputs.bundlename}}/${{inputs.subfolder}}
-
+        ${{ inputs.bundlename }}=${{ inputs.bundlename }}/${{inputs.subfolder}}
+    - name: Debug
+      shell: python
+      run: |
+        print('Step 2:\n Prepare AWS')
     - name: Prepare awscliv2 for the next steps
       shell: bash
       run: |
