@@ -57,7 +57,10 @@ inputs:
 runs:
   using: "composite"
   steps: 
-
+    - name: Debug
+      shell: python
+      run: |
+        print('It starts!')
     - name: Prepend subfolder with slashes
       shell: bash
       run: |
