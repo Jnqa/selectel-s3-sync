@@ -73,19 +73,19 @@ runs:
     - name: configuring AMAZON profile
       shell: bash
       run: |
-        aws configure set aws_access_key_id ${{ inputs.AWS_ACCESS_KEY_ID }} --profile AMAZON
-        aws configure set aws_secret_access_key ${{ inputs.AWS_SECRET_ACCESS_KEY }} --profile AMAZON
-        aws configure set default.region ${{ inputs.AWS_REGION }} --profile AMAZON
-        aws s3 ls --profile AMAZON || echo "Bad credentials"
+        aws configure set aws_access_key_id "${{ inputs.AWS_ACCESS_KEY_ID }}" --profile AMAZON
+        aws configure set aws_secret_access_key "${{ inputs.AWS_SECRET_ACCESS_KEY }}" --profile AMAZON
+        aws configure set default.region "${{ inputs.AWS_REGION }}" --profile AMAZON
+        aws s3 ls --profile AMAZON || echo "AMAZON: Bad credentials"
 
     - name: configuring SELECTEL profile
       shell: bash
       run: |
-        aws configure set aws_access_key_id ${{ inputs.AWS_ACCESS_KEY_ID_SELECTEL }} --profile SELECTEL
-        aws configure set aws_secret_access_key ${{ inputs.AWS_SECRET_ACCESS_KEY_SELECTEL }} --profile SELECTEL
+        aws configure set aws_access_key_id "${{ inputs.AWS_ACCESS_KEY_ID_SELECTEL }}" --profile SELECTEL
+        aws configure set aws_secret_access_key "${{ inputs.AWS_SECRET_ACCESS_KEY_SELECTEL }}" --profile SELECTEL
         aws configure set default.region ru-1a --profile SELECTEL
-        aws configure set endpoint-url ${{ inputs.ENDPOINT }} --profile SELECTEL
-        aws s3 ls --profile SELECTEL || echo "Bad credentials"
+        aws configure set endpoint-url "${{ inputs.ENDPOINT }}" --profile SELECTEL
+        aws s3 ls --profile SELECTEL || echo "SELECTEL: Bad credentials"
     
     - name: Upload to S3
       shell: bash
