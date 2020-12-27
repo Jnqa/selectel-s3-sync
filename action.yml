@@ -73,11 +73,11 @@ runs:
     - name: configuring AMAZON (A) profile
       shell: bash
       run: |
-        aws configure set aws_access_key_id "${{ inputs.AWS_ACCESS_KEY_ID }}" profile A
-        aws configure set aws_secret_access_key "${{ inputs.AWS_SECRET_ACCESS_KEY }}" profile A
-        aws configure set default.region "${{ inputs.AWS_REGION }}" profile A
-        aws configure set endpoint-url s3.${{ inputs.AWS_REGION }}.amazonaws.com profile A
-        aws s3 ls profile A || echo "A: Bad credentials"
+        aws configure set aws_access_key_id "${{ inputs.AWS_ACCESS_KEY_ID }}" --profile "A"
+        aws configure set aws_secret_access_key "${{ inputs.AWS_SECRET_ACCESS_KEY }}" --profile "A"
+        aws configure set default.region "${{ inputs.AWS_REGION }}" --profile "A"
+        aws configure set endpoint-url s3.${{ inputs.AWS_REGION }}.amazonaws.com --profile "A"
+        aws s3 ls --profile "A" || echo "A: Bad credentials"
     
     - name: configuring AMAZON without profile
       shell: bash
