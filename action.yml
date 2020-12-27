@@ -8,9 +8,10 @@ inputs:
     default: s3
     
   archivename:
-    requred: true
+    requred: false
     description: 'Archive name'
-    
+    default: null
+
   version:
     description: 'Version'
     requred: true
@@ -44,7 +45,9 @@ inputs:
     required: true
   AWS_SECRET_ACCESS_KEY_SELECTEL:
     required: true
-  
+  SELECTEL_ENDPOINT:
+    required: false
+    default: https://s3.selcdn.ru # --endpoint-url=
   
 runs:
   using: "composite"
@@ -64,9 +67,8 @@ runs:
       shell: bash
       run: |
         curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-        unzip awscliv2.zip
-        sudo ./aws/install
-        echo 'complete' && sleep 2
+        unzip awscliv2.zip > /dev/null
+        sudo ./aws/install > /dev/null
     - name: Upload to S3
       shell: bash
       run: |
@@ -74,8 +76,10 @@ runs:
         aws configure set aws_secret_access_key ${{ inputs.AWS_SECRET_ACCESS_KEY }}
         aws configure set default.region ${{ inputs.AWS_REGION }}
         sleep 2
-        aws s3 cp ./${{ inputs.dirname }}/* s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/ ||\
-        echo 'aws s3 cp ./${{ inputs.dirname }}/* s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}'
+        aws s3 cp ./${{ inputs.dirname }}/* s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}
+        [[ ${{ inputs.archivename }} != null ]] &&\
+        (aws s3 cp ./${{ inputs.dirname }}/${{ inputs.archivename }} s3://${{ inputs.bucketname }}/bundles/${{ inputs.version }}.zip ||\
+        echo "no ./${{ inputs.dirname }}/${{ inputs.archivename }}" && echo exit 1 ) || echo "archive is null"        
 
 
 
