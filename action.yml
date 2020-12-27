@@ -76,11 +76,11 @@ runs:
         aws configure set aws_secret_access_key ${{ inputs.AWS_SECRET_ACCESS_KEY }}
         aws configure set default.region ${{ inputs.AWS_REGION }}
         echo 'Uploading..'
-        [[ ${{ inputs.archivename }} != null ]] &&\
+        [[ ${{ inputs.archivename }} != '' ]] &&\
         (aws s3 mv ./${{ inputs.dirname }}/${{ inputs.archivename }} s3://${{ inputs.bucketname }}/bundles/${{ inputs.version }}.zip ||\
         echo "no ./${{ inputs.dirname }}/${{ inputs.archivename }}" && echo exit 1 ) || echo "archive is null" 
         sleep 2
-        aws s3 cp ./${{ inputs.dirname }}/* s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}       
+        aws s3 cp ./${{ inputs.dirname }}/* s3://${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/    
 
 
 
