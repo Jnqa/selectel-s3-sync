@@ -52,7 +52,7 @@ runs:
     - name: Sync with Selectel
       shell: bash
       run: |
-        aws s3 sync ${{ inputs.dirname }} 's3://${{ inputs.bucketname }}/${{ inputs.subfolder }}' --endpoint ${{ inputs.ENDPOINT }}
+        aws s3 sync ${{ inputs.dirname }} 's3://${{ inputs.bucketname }}/${{ inputs.s3dirname }}' --endpoint ${{ inputs.ENDPOINT }}
 
     - name: Print URLs 
       shell: bash
