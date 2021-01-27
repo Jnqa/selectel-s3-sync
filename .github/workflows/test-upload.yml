@@ -1,5 +1,5 @@
 
-name: Build & upload latest WebView-bundle
+name: Upload to Selectel
 
 on:
   push:
@@ -19,11 +19,8 @@ jobs:
         uses: Jnqa/zebruzka@main
         with:
           dirname: lab
-#           version: latest
           bucketname: jnqa-test #wiz417-bucket #web-bundles 
-          bundlename: lab
-#           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#           AWS_REGION: eu-north-1
-          ENDPOINT: https://s3.selcdn.ru
-          SELECTEL_URL: https://6a39d29f-7919-4a2c-b54e-f8066f9effbb.selcdn.net--no
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_SELECTEL }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_SELECTEL }}
+          # ENDPOINT: https://s3.selcdn.ru
+          # SELECTEL_URL: https://6a39d29f-7919-4a2c-b54e-f8066f9effbb.selcdn.net--no

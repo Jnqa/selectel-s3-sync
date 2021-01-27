@@ -1,4 +1,4 @@
-name: 'Upload dir & zip to S3'
+name: 'Upload to S3'
 description: ''
 inputs:
 
@@ -6,16 +6,7 @@ inputs:
     description: 'folder to upload'
     required: false
     default: s3
-    
-  archivename:
-    requred: false
-    description: 'Archive name'
-    default: 'null'
-
-  version:
-    description: 'Version'
-    requred: true
-  
+     
   bucketname:
     description: 'Bucket name'
     requred: true
@@ -24,32 +15,19 @@ inputs:
   bundlename:
     description: 'Package/bundle name'
     requred: true
-    
-  removeAfterUpload:
-    required: false
-    default: false
-    
-  subfolder:
-    required: false
-    default: 'null'
-    
-  AWS_ACCESS_KEY_ID:
-    required: true
-  AWS_SECRET_ACCESS_KEY:
-    required: true
-  AWS_REGION:
-    required: false
-    default: 'us-east-2'
         
   AWS_ACCESS_KEY_ID_SELECTEL:
-    required: false
+    required: true
     default: 'null'
+
   AWS_SECRET_ACCESS_KEY_SELECTEL:
-    required: false
+    required: true
     default: 'null'
+
   ENDPOINT:
     required: false
-    default: 'https://s3.selcdn.ru' # --endpoint-url=
+    default: https://s3.selcdn.ru
+
   SELECTEL_URL:
     required: false
     default: ''
@@ -57,69 +35,33 @@ inputs:
 runs:
   using: "composite"
   steps: 
-    - name: Prepend subfolder with slashes
+    - name: Configure Selectel
       shell: bash
       run: |
-        [[ ${{ inputs.subfolder }} != 'null' ]] &&\
-        echo "BUNDLENAME=${{ inputs.bundlename }}/${{ inputs.subfolder }}" >> $GITHUB_ENV ||\
-        echo "BUNDLENAME=${{ inputs.bundlename }}" >> $GITHUB_ENV
-    - name: Prepare awscliv2 for the next steps
+        aws configure set aws_access_key_id "145478_Jnqa"
+        aws configure set aws_secret_access_key "4(7-jn/UBd" 
+        aws configure set endpoint-url https://s3.selcdn.ru/
+        aws configure set default.region "ru-1"
+        aws s3 ls --endpoint https://s3.selcdn.ru/
+
+
+    - name: Upload to Selectel
       shell: bash
       run: |
-        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-        unzip awscliv2.zip > /dev/null
-        sudo ./aws/install > /dev/null
-    
-    - name: configuring AMAZON profile
+        aws s3 cp ${{ inputs.dirname }} 's3://${{ inputs.bucketname }}/' --recursive --endpoint ${{ inputs.ENDPOINT }}
+
+
+    - name: configuring AMAZON profile 
       shell: bash
       run: |
         aws configure set aws_access_key_id "${{ inputs.AWS_ACCESS_KEY_ID }}"
         aws configure set aws_secret_access_key "${{ inputs.AWS_SECRET_ACCESS_KEY }}"
         aws configure set default.region "${{ inputs.AWS_REGION }}"
         aws configure set endpoint-url s3.${{ inputs.AWS_REGION }}.amazonaws.com
-        aws s3 ls || echo "AMAZON: Bad credentials"
- 
-    - name: Upload to S3 AMAZON
-      shell: bash
-      run: |
-        [[ "${{ inputs.archivename }}" != "null" ]] &&\
-        (aws s3 cp ./${{ inputs.dirname }}/${{ inputs.archivename }}\
-         s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/${{ inputs.version }}.zip &&\
-         echo 'AMAZON Uploaded: s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/${{ inputs.version }}.zip' ||\
-        echo "no ./${{ inputs.dirname }}/${{ inputs.archivename }}" && echo exit 1)
-        aws s3 cp ./${{ inputs.dirname }}/ s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/ --recursive --include "*" --exclude "${{ inputs.archivename }}" 
-        echo 'AMAZON Uploaded: s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/'
-      
-    - name: configuring SELECTEL profile
-      shell: bash
-      run: |
-        aws configure set aws_access_key_id "${{ inputs.AWS_ACCESS_KEY_ID_SELECTEL }}" 
-        aws configure set aws_secret_access_key "${{ inputs.AWS_SECRET_ACCESS_KEY_SELECTEL }}" 
-        aws configure set endpoint-url ${{ inputs.ENDPOINT }}
-        aws configure set default.region ru-1a 
         aws s3 ls || echo "SELECTEL: Bad credentials"
 
-    - name: Upload to S3 SELECTEL
-      shell: bash
-      run: |
-        [[ "${{ inputs.archivename }}" != "null" ]] &&\
-        [[ "${{ inputs.AWS_ACCESS_KEY_ID_SELECTEL }}" != "null" ]] &&\
-        [[ "${{ inputs.AWS_SECRET_ACCESS_KEY_SELECTEL }}" != "null" ]] &&\
-        (aws s3 cp ./${{ inputs.dirname }}/${{ inputs.archivename }}\
-         s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/${{ inputs.version }}.zip &&\
-         echo "SELECTEL Uploaded: s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/${{ inputs.version }}.zip" ||\
-        echo "no ./${{ inputs.dirname }}/${{ inputs.archivename }}" && echo exit 1)
-        [[ "${{ inputs.AWS_ACCESS_KEY_ID_SELECTEL }}" != "null" ]] &&\
-        [[ "${{ inputs.AWS_SECRET_ACCESS_KEY_SELECTEL }}" != "null" ]] &&\
-        aws s3 cp ./${{ inputs.dirname }}/ s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/ --recursive --include "*" --exclude "${{ inputs.archivename }}" 
-        echo "SELECTEL Uploaded: s3://${{ inputs.bucketname }}/bundles/${{env.BUNDLENAME}}/${{ inputs.version }}/"
 
     - name: Print URLs 
       shell: bash
       run: |
-        echo "${{ inputs.SELECTEL_URL }}/${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}/index.html"
-        echo "${{ inputs.SELECTEL_URL }}/${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}.zip"
-        echo " - - - "
-        echo "https://${{ inputs.bucketname }}.s3.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}/index.html"
-        echo "https://${{ inputs.bucketname }}.s3.${{ inputs.AWS_REGION }}.amazonaws.com/${{ inputs.bucketname }}/bundles/${{ inputs.bundlename }}/${{ inputs.version }}.zip"
-
+        echo later
