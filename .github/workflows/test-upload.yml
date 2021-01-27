@@ -18,7 +18,7 @@ jobs:
       - name: Upload archive to S3
         uses: Jnqa/zebruzka@main
         with:
-          dirname: lab/test.txt
+          dirname: lab
           bucketname: jnqa-test #wiz417-bucket #web-bundles 
           # s3dirname: lab_on_cloud
           AWS_ACCESS_KEY_ID_SELECTEL: ${{ secrets.AWS_ACCESS_KEY_ID_SELECTEL }}

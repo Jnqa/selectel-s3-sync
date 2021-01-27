@@ -39,28 +39,22 @@ runs:
     - name: Configure Selectel
       shell: bash
       run: |
-        aws configure set aws_access_key_id "145478_Jnqa"
-        aws configure set aws_secret_access_key "4(7-jn/UBd" 
-        aws configure set endpoint-url https://s3.selcdn.ru/
+        aws configure set aws_access_key_id "${{ inputs.AWS_ACCESS_KEY_ID_SELECTEL }}"
+        aws configure set aws_secret_access_key "${{ inputs.AWS_SECRET_ACCESS_KEY_SELECTEL }}" 
+        aws configure set endpoint-url ${{ inputs.ENDPOINT }}
         aws configure set default.region "ru-1"
         aws s3 ls --endpoint https://s3.selcdn.ru/
 
 
-    - name: Upload to Selectel
+    # - name: Upload to Selectel
+    #   shell: bash
+    #   run: |
+    #     aws s3 cp ${{ inputs.dirname }} 's3://${{ inputs.bucketname }}/${{ inputs.subfolder }}' --recursive --endpoint ${{ inputs.ENDPOINT }}
+
+    - name: Sync with Selectel
       shell: bash
       run: |
-        aws s3 cp ${{ inputs.dirname }} 's3://${{ inputs.bucketname }}/${{ inputs.subfolder }}' --recursive --endpoint ${{ inputs.ENDPOINT }}
-
-
-    - name: configuring AMAZON profile 
-      shell: bash
-      run: |
-        aws configure set aws_access_key_id "${{ inputs.AWS_ACCESS_KEY_ID }}"
-        aws configure set aws_secret_access_key "${{ inputs.AWS_SECRET_ACCESS_KEY }}"
-        aws configure set default.region "${{ inputs.AWS_REGION }}"
-        aws configure set endpoint-url s3.${{ inputs.AWS_REGION }}.amazonaws.com
-        aws s3 ls || echo "SELECTEL: Bad credentials"
-
+        aws s3 sync ${{ inputs.dirname }} 's3://${{ inputs.bucketname }}/${{ inputs.subfolder }}' --endpoint ${{ inputs.ENDPOINT }}
 
     - name: Print URLs 
       shell: bash
