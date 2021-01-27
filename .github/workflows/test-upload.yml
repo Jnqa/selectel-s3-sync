@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Upload archive to S3
+      - name: Sync with Cloud
         uses: Jnqa/zebruzka@main
         with:
           dirname: lab

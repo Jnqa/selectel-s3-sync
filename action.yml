@@ -19,11 +19,9 @@ inputs:
         
   AWS_ACCESS_KEY_ID_SELECTEL:
     required: true
-    default: 'null'
 
   AWS_SECRET_ACCESS_KEY_SELECTEL:
     required: true
-    default: 'null'
 
   ENDPOINT:
     required: false
