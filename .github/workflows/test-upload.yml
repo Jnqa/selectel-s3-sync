@@ -20,7 +20,7 @@ jobs:
         with:
           dirname: lab
           bucketname: jnqa-test
-          s3dirname: lab-catalog/
+          s3dirname: lab-catalog
           AWS_ACCESS_KEY_ID_SELECTEL: ${{ secrets.AWS_ACCESS_KEY_ID_SELECTEL }}
           AWS_SECRET_ACCESS_KEY_SELECTEL: ${{ secrets.AWS_SECRET_ACCESS_KEY_SELECTEL }}
           # ENDPOINT: https://s3.selcdn.ru
