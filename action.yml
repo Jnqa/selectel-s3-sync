@@ -12,8 +12,10 @@ inputs:
     requred: true
     default: 'web-bundles'
 
-  s3dirnames:
+  s3dirname:
     description: 'folder on S3 to upload to'
+    requred: false
+    default: ''
         
   AWS_ACCESS_KEY_ID_SELECTEL:
     required: true
