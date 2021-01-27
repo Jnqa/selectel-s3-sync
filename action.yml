@@ -12,9 +12,8 @@ inputs:
     requred: true
     default: 'web-bundles'
 
-  bundlename:
-    description: 'Package/bundle name'
-    requred: true
+  subfolder:
+    description: 'folder on S3 to upload to'
         
   AWS_ACCESS_KEY_ID_SELECTEL:
     required: true
@@ -48,7 +47,7 @@ runs:
     - name: Upload to Selectel
       shell: bash
       run: |
-        aws s3 cp ${{ inputs.dirname }} 's3://${{ inputs.bucketname }}/' --recursive --endpoint ${{ inputs.ENDPOINT }}
+        aws s3 cp ${{ inputs.dirname }} 's3://${{ inputs.bucketname }}/${{ inputs.subfolder }}' --recursive --endpoint ${{ inputs.ENDPOINT }}
 
 
     - name: configuring AMAZON profile 
