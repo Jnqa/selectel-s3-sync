@@ -20,7 +20,7 @@ jobs:
         with:
           dirname: lab
           bucketname: jnqa-test #wiz417-bucket #web-bundles 
-          subfolder: lab_on_cloud
+          # s3dirname: lab_on_cloud
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_SELECTEL }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_SELECTEL }}
           # ENDPOINT: https://s3.selcdn.ru

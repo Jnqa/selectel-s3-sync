@@ -12,7 +12,7 @@ inputs:
     requred: true
     default: 'web-bundles'
 
-  subfolder:
+  s3dirnames:
     description: 'folder on S3 to upload to'
         
   AWS_ACCESS_KEY_ID_SELECTEL:
