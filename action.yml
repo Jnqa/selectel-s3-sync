@@ -15,7 +15,7 @@ inputs:
   s3dirname:
     description: 'folder on S3 to upload to'
     requred: false
-    default: ''
+    default: 'default-folder'
         
   AWS_ACCESS_KEY_ID_SELECTEL:
     required: true
