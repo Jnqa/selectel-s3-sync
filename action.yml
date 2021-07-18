@@ -30,6 +30,10 @@ inputs:
   SELECTEL_URL:
     required: false
     default: ''
+    
+  REGION:
+    required: false
+    default: "ru-1"
 
 runs:
   using: "composite"
@@ -40,7 +44,7 @@ runs:
         aws configure set aws_access_key_id "${{ inputs.AWS_ACCESS_KEY_ID_SELECTEL }}"
         aws configure set aws_secret_access_key "${{ inputs.AWS_SECRET_ACCESS_KEY_SELECTEL }}" 
         aws configure set endpoint-url ${{ inputs.ENDPOINT }}
-        aws configure set default.region "ru-1"
+        aws configure set default.region ${{ inputs.REGION }}
         aws s3 ls --endpoint https://s3.selcdn.ru/
 
 
