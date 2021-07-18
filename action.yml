@@ -33,7 +33,7 @@ inputs:
     
   REGION:
     required: false
-    default: "ru-1"
+    default: "ru-1a"
 
 runs:
   using: "composite"
