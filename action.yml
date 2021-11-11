@@ -71,7 +71,7 @@ runs:
       if: inputs.DOWNLOAD == 'true'
       shell: bash
       run: |
-        aws s3 sync 's3://${{ inputs.bucketname }}/${{ inputs.s3dirname }}' '${{ inputs.dirname }}' --endpoint ${{ inputs.ENDPOINT }}
+        aws s3 cp 's3://${{ inputs.bucketname }}/${{ inputs.s3dirname }}' '${{ inputs.dirname }}' --endpoint ${{ inputs.ENDPOINT }}
 
     - name: Print URLs 
       if: inputs.URL-PREFIX != 'None' && inputs.DOWNLOAD == 'false'
