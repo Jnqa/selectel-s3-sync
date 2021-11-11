@@ -34,7 +34,7 @@ if you want to download files:
             AWS_SECRET_ACCESS_KEY_SELECTEL: ${{ secrets.SELECTEL_ACCESS_KEY }}
 ```
 
-if you want to download sinlge file:
+if you want to download a sinlge file:
 ```yml
             s3dirname: selectel/folder/from
             FILENAME: my-build.zip
@@ -53,5 +53,5 @@ if you want to download sinlge file:
 | `SELECTEL_ACCESS_KEY` | [Selectel access key.](https://my.selectel.ru/storage/users) | `Yes` | `-` |
 | `ENDPOINT` | If you want to use another S3(Simple Storage Service). | `No` | `https://s3.selcdn.ru` |
 | `REGION` | If you need another region. | `No` | `ru-1a` |
-| `DOWNLOAD` | If want to download file. (`true`/`false`) | `No` | `false` |
-| `FILENAME` | If want to download single file. (`filename`) | `No` | `-` |
+| `DOWNLOAD` | If want to download a file. (`true`/`false`) | `No` | `false` |
+| `FILENAME` | If want to download a single file. (`filename`) | `No` | `-` |
