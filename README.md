@@ -51,7 +51,7 @@ if you want to download sinlge file:
 | `bucketname` | Bucket/container name. [containers](https://my.selectel.ru/storage/containers) | `Yes` | `-` |
 | `SELECTEL_KEY_ID` | [Selectel id.](https://my.selectel.ru/storage/users) | `Yes` | `-` |
 | `SELECTEL_ACCESS_KEY` | [Selectel access key.](https://my.selectel.ru/storage/users) | `Yes` | `-` |
-| `ENDPOINT` | If you want to use another S3(Simple Storage Service). | `https://s3.selcdn.ru` | `No` |
+| `ENDPOINT` | If you want to use another S3(Simple Storage Service). | `No` | `https://s3.selcdn.ru` |
 | `REGION` | If you need another region. | `No` | `ru-1a` |
 | `DOWNLOAD` | If want to download file. (`true`/`false`) | `No` | `false` |
 | `FILENAME` | If want to download single file. (`filename`) | `No` | `-` |
