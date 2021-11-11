@@ -1,5 +1,5 @@
-# Create Documentation and save as .md file
-A GitHub action to create a md file for your repository from files with using [XML Documentation Comments](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/).
+# Upload to Selectel S3 or Download from Selectel S3
+it is not necessary to use the selectel, endpoint can be replaced.
 
 ## Usage
 
