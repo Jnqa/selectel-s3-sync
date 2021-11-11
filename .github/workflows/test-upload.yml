@@ -33,9 +33,9 @@ jobs:
           dirname: download
           DOWNLOAD: true
           bucketname: jnqa-test
-          s3dirname: downloadme/cocos.zip
+          s3dirname: downloadme
           AWS_ACCESS_KEY_ID_SELECTEL: ${{ secrets.AWS_ACCESS_KEY_ID_SELECTEL }}
           AWS_SECRET_ACCESS_KEY_SELECTEL: ${{ secrets.AWS_SECRET_ACCESS_KEY_SELECTEL }}
 
       - name: echo
-        run: ls ./download
+        run: ls ./download/
