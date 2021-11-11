@@ -31,9 +31,10 @@ jobs:
         uses: Jnqa/upload-to-s3-selectel@main
         with:
           dirname: download
-          DOWNLOAD: true
           bucketname: jnqa-test
           s3dirname: downloadme
+          FILENAME: cocos.zip
+          DOWNLOAD: true
           AWS_ACCESS_KEY_ID_SELECTEL: ${{ secrets.AWS_ACCESS_KEY_ID_SELECTEL }}
           AWS_SECRET_ACCESS_KEY_SELECTEL: ${{ secrets.AWS_SECRET_ACCESS_KEY_SELECTEL }}
 

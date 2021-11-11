@@ -26,11 +26,7 @@ inputs:
   ENDPOINT:
     required: false
     default: https://s3.selcdn.ru
-
-  SELECTEL_URL:
-    required: false
-    default: ''
-    
+  
   REGION:
     required: false
     default: "ru-1a"
@@ -39,9 +35,9 @@ inputs:
     required: false
     default: "false"
 
-  URL-PREFIX:
+  FILENAME:
     required: false
-    default: "None"
+    default: ""
 
 runs:
   using: "composite"
@@ -55,12 +51,6 @@ runs:
         aws configure set default.region ${{ inputs.REGION }}
         aws s3 ls --endpoint https://s3.selcdn.ru/
 
-
-    # - name: Upload to Selectel
-    #   shell: bash
-    #   run: |
-    #     aws s3 cp ${{ inputs.dirname }} 's3://${{ inputs.bucketname }}/${{ inputs.subfolder }}' --recursive --endpoint ${{ inputs.ENDPOINT }}
-
     - name: Sync with Selectel (UPLOAD)
       if: inputs.DOWNLOAD == 'false'
       shell: bash
@@ -68,14 +58,20 @@ runs:
         aws s3 sync '${{ inputs.dirname }}' 's3://${{ inputs.bucketname }}/${{ inputs.s3dirname }}' --endpoint ${{ inputs.ENDPOINT }}
 
     - name: Sync with Selectel (DOWNLOAD)
-      if: inputs.DOWNLOAD == 'true'
+      if: inputs.DOWNLOAD == 'true' && inputs.FILENAME == ''
       shell: bash
       run: |
         aws s3 sync 's3://${{ inputs.bucketname }}/${{ inputs.s3dirname }}' '${{ inputs.dirname }}' --endpoint ${{ inputs.ENDPOINT }}
 
-    - name: Print URLs 
-      if: inputs.URL-PREFIX != 'None' && inputs.DOWNLOAD == 'false'
+    - name: Copy from Selectel (DOWNLOAD)
+      if: inputs.DOWNLOAD == 'true' && inputs.FILENAME != ''
       shell: bash
       run: |
-        echo ${{ inputs.URL-PREFIX }}${{ inputs.bucketname }}/${{ inputs.s3dirname }}/filename
-        echo will be later
+        aws s3 sync 's3://${{ inputs.bucketname }}/${{ inputs.s3dirname }}' '${{ inputs.dirname }}' --endpoint ${{ inputs.ENDPOINT }}
+
+    # - name: Print URLs 
+    #   if: inputs.URL-PREFIX != 'None' && inputs.DOWNLOAD == 'false'
+    #   shell: bash
+    #   run: |
+    #     echo ${{ inputs.URL-PREFIX }}${{ inputs.bucketname }}/${{ inputs.s3dirname }}/filename
+    #     echo will be later
