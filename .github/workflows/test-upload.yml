@@ -14,6 +14,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      
+      - name: write run-id
+        run: echo ${{ github.run_id }} >> ./lab/run-id.txt
+
 
       - name: Sync with Seleclel (Up)
         uses: Jnqa/upload-to-s3-selectel@main
@@ -32,11 +36,18 @@ jobs:
         with:
           dirname: download
           bucketname: jnqa-test
-          s3dirname: downloadme
-          FILENAME: cocos.zip
+          s3dirname: lab-catalog
+          FILENAME: run-id.txt
           DOWNLOAD: true
           AWS_ACCESS_KEY_ID_SELECTEL: ${{ secrets.AWS_ACCESS_KEY_ID_SELECTEL }}
           AWS_SECRET_ACCESS_KEY_SELECTEL: ${{ secrets.AWS_SECRET_ACCESS_KEY_SELECTEL }}
 
-      - name: echo
+      - name: ls check
         run: ls ./download/
+      
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: lab-files
+          path: download
+          retention-days: 1
