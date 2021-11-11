@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Sync with Seleclel
+      - name: Sync with Seleclel (Up)
         uses: Jnqa/upload-to-s3-selectel@main
         with:
           dirname: lab
@@ -25,3 +25,17 @@ jobs:
           AWS_SECRET_ACCESS_KEY_SELECTEL: ${{ secrets.AWS_SECRET_ACCESS_KEY_SELECTEL }}
           # ENDPOINT: https://s3.selcdn.ru
           # SELECTEL_URL: https://6a39d29f-7919-4a2c-b54e-f8066f9effbb.selcdn.net--no
+
+      
+      - name: Sync with Seleclel (Down)
+        uses: Jnqa/upload-to-s3-selectel@main
+        with:
+          dirname: download
+          DOWNLOAD: true
+          bucketname: jnqa-test
+          s3dirname: downloadme/cocos.zip
+          AWS_ACCESS_KEY_ID_SELECTEL: ${{ secrets.AWS_ACCESS_KEY_ID_SELECTEL }}
+          AWS_SECRET_ACCESS_KEY_SELECTEL: ${{ secrets.AWS_SECRET_ACCESS_KEY_SELECTEL }}
+
+      - name: echo
+        run: ls ./download
