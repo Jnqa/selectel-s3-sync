@@ -4,8 +4,8 @@ inputs:
 
   dirname:
     description: 'folder to upload'
-    required: false
-    default: s3
+    required: true
+    default: ''
      
   bucketname:
     description: 'Bucket name'
@@ -17,10 +17,10 @@ inputs:
     requred: true
     default: ''
         
-  AWS_ACCESS_KEY_ID_SELECTEL:
+  SELECTEL_KEY_ID:
     required: true
 
-  AWS_SECRET_ACCESS_KEY_SELECTEL:
+  SELECTEL_ACCESS_KEY:
     required: true
 
   ENDPOINT:
@@ -45,8 +45,8 @@ runs:
     - name: Configure Selectel
       shell: bash
       run: |
-        aws configure set aws_access_key_id "${{ inputs.AWS_ACCESS_KEY_ID_SELECTEL }}"
-        aws configure set aws_secret_access_key "${{ inputs.AWS_SECRET_ACCESS_KEY_SELECTEL }}" 
+        aws configure set aws_access_key_id "${{ inputs.SELECTEL_KEY_ID }}"
+        aws configure set aws_secret_access_key "${{ inputs.SELECTEL_ACCESS_KEY }}" 
         aws configure set endpoint-url ${{ inputs.ENDPOINT }}
         aws configure set default.region ${{ inputs.REGION }}
         aws s3 ls --endpoint https://s3.selcdn.ru/
