@@ -17,13 +17,13 @@ jobs:
         uses: actions/checkout@v2
       
       - name: write run-id
-        run: echo ${{ github.run_id }} >> ./lab/run-id.txt
+        run: echo ${{ github.run_id }} >> ./lab/run-id.txt && rm ./lab/*
 
 
       - name: Sync with Seleclel (Up)
         uses: Jnqa/upload-to-s3-selectel@main
         with:
-          dirname: lab2
+          dirname: lab
           bucketname: jnqa-test
           s3dirname: lab-catalog
           SELECTEL_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_SELECTEL }}
