@@ -55,7 +55,7 @@ runs:
       if: inputs.DOWNLOAD == 'false'
       shell: bash
       run: |
-        ([ -d '${{ inputs.dirname }}' ] && aws s3 sync '${{ inputs.dirname }}' 's3://${{ inputs.bucketname }}/${{ inputs.s3dirname }}' --endpoint ${{ inputs.ENDPOINT }}) || echo 'bad path or no files'
+        ([ -d '${{ inputs.dirname }}' ] && aws s3 sync '${{ inputs.dirname }}' 's3://${{ inputs.bucketname }}/${{ inputs.s3dirname }}' --endpoint ${{ inputs.ENDPOINT }}) || (echo 'Bad path ${{ inputs.dirname }}')
 
     - name: Sync with Selectel (DOWNLOAD)
       if: inputs.DOWNLOAD == 'true' && inputs.FILENAME == ''
