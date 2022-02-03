@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v2
       
       - name: write run-id
-        run: echo ${{ github.run_id }} >> ./lab/run-id.txt && rm ./lab/*
+        run: echo ${{ github.run_id }} >> ./lab/run-id.txt
 
 
       - name: Sync with Seleclel (Up)
