@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - master
+      - is-not-empty
 
 jobs:
   build:
@@ -22,7 +23,7 @@ jobs:
       - name: Sync with Seleclel (Up)
         uses: Jnqa/upload-to-s3-selectel@main
         with:
-          dirname: lab
+          dirname: lab2
           bucketname: jnqa-test
           s3dirname: lab-catalog
           SELECTEL_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_SELECTEL }}
