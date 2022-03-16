@@ -9,7 +9,7 @@ if you want to upload files:
         - uses: actions/checkout@v2
           # Make changes here
         - name: Sync with Seleclel (UPLOAD)
-          uses: Jnqa/upload-to-s3-selectel@v3
+          uses: Jnqa/selectel-s3-sync@v3
           with:
             dirname: build/dir
             bucketname: my-bucket
@@ -24,7 +24,7 @@ if you want to download files:
         - uses: actions/checkout@v2
           # Make changes here
         - name: Sync with Seleclel (DOWNLOAD)
-          uses: Jnqa/upload-to-s3-selectel@v3
+          uses: Jnqa/selectel-s3-sync@v3
           with:
             dirname: download-dir
             bucketname: my-bucket
