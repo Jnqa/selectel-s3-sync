@@ -50,19 +50,19 @@ runs:
       if: inputs.REGION != ''
       run: aws configure set default.region ${{ inputs.REGION }}
 
-    - name: Sync with Selectel (UPLOAD)
+    - name: Sync with AWS (UPLOAD)
       if: inputs.DOWNLOAD == 'false'
       shell: bash
       run: |
         ([ -d '${{ inputs.dirname }}' ] && aws s3 sync '${{ inputs.dirname }}' 's3://${{ inputs.bucketname }}/${{ inputs.s3dirname }}') || (echo 'Bad path ${{ inputs.dirname }}')
 
-    - name: Sync with Selectel (DOWNLOAD)
+    - name: Sync with AWS (DOWNLOAD)
       if: inputs.DOWNLOAD == 'true' && inputs.FILENAME == ''
       shell: bash
       run: |
         aws s3 sync 's3://${{ inputs.bucketname }}/${{ inputs.s3dirname }}' '${{ inputs.dirname }}'
 
-    - name: Copy from Selectel (DOWNLOAD)
+    - name: Copy from AWS (DOWNLOAD)
       if: inputs.DOWNLOAD == 'true' && inputs.FILENAME != ''
       shell: bash
       run: |
