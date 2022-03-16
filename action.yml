@@ -17,19 +17,15 @@ inputs:
     requred: true
     default: ''
         
-  SELECTEL_KEY_ID:
+  AWS_KEY_ID:
     required: true
 
-  SELECTEL_ACCESS_KEY:
+  AWS_ACCESS_KEY:
     required: true
 
-  ENDPOINT:
-    required: false
-    default: https://s3.selcdn.ru
-  
   REGION:
     required: false
-    default: "ru-1a"
+    default: ""
 
   DOWNLOAD:
     required: false
@@ -45,30 +41,32 @@ runs:
     - name: Configure Selectel
       shell: bash
       run: |
-        aws configure set aws_access_key_id "${{ inputs.SELECTEL_KEY_ID }}"
-        aws configure set aws_secret_access_key "${{ inputs.SELECTEL_ACCESS_KEY }}" 
-        aws configure set endpoint-url ${{ inputs.ENDPOINT }}
-        aws configure set default.region ${{ inputs.REGION }}
-        aws s3 ls --endpoint https://s3.selcdn.ru/
+        aws configure set aws_access_key_id "${{ inputs.AWS_KEY_ID }}"
+        aws configure set aws_secret_access_key "${{ inputs.AWS_ACCESS_KEY }}" 
+        aws s3 ls || echo "bad data / region"
+      
+    - name: region
+      shell: bash
+      if: inputs.REGION != ''
+      run: aws configure set default.region ${{ inputs.REGION }}
 
     - name: Sync with Selectel (UPLOAD)
       if: inputs.DOWNLOAD == 'false'
       shell: bash
       run: |
-        ([ -d '${{ inputs.dirname }}' ] && aws s3 sync '${{ inputs.dirname }}' 's3://${{ inputs.bucketname }}/${{ inputs.s3dirname }}' --endpoint ${{ inputs.ENDPOINT }}) || (echo 'Bad path ${{ inputs.dirname }}')
+        ([ -d '${{ inputs.dirname }}' ] && aws s3 sync '${{ inputs.dirname }}' 's3://${{ inputs.bucketname }}/${{ inputs.s3dirname }}'|| (echo 'Bad path ${{ inputs.dirname }}')
 
     - name: Sync with Selectel (DOWNLOAD)
       if: inputs.DOWNLOAD == 'true' && inputs.FILENAME == ''
       shell: bash
       run: |
-        aws s3 sync 's3://${{ inputs.bucketname }}/${{ inputs.s3dirname }}' '${{ inputs.dirname }}' --endpoint ${{ inputs.ENDPOINT }}
+        aws s3 sync 's3://${{ inputs.bucketname }}/${{ inputs.s3dirname }}' '${{ inputs.dirname }}'
 
     - name: Copy from Selectel (DOWNLOAD)
       if: inputs.DOWNLOAD == 'true' && inputs.FILENAME != ''
       shell: bash
       run: |
-        aws s3 cp 's3://${{ inputs.bucketname }}/${{ inputs.s3dirname }}/${{ inputs.FILENAME }}' '${{ inputs.dirname }}/${{ inputs.FILENAME }}' --endpoint ${{ inputs.ENDPOINT }}
-
+        aws s3 cp 's3://${{ inputs.bucketname }}/${{ inputs.s3dirname }}/${{ inputs.FILENAME }}' '${{ inputs.dirname }}/${{ inputs.FILENAME }}'
     # - name: Print URLs 
     #   if: inputs.URL-PREFIX != 'None' && inputs.DOWNLOAD == 'false'
     #   shell: bash
