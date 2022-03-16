@@ -22,7 +22,7 @@ jobs:
 
 
       - name: Sync with AWS (Up)
-        uses: Jnqa/upload-to-s3-selectel@aws
+        uses: Jnqa/selectel-s3-sync@aws
         with:
           dirname: lab
           bucketname: jnqa-test
@@ -32,7 +32,7 @@ jobs:
 
       
       - name: Sync with Seleclel (Down)
-        uses: Jnqa/upload-to-s3-selectel@aws
+        uses: Jnqa/selectel-s3-sync@aws
         with:
           dirname: download
           bucketname: jnqa-test
