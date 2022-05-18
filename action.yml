@@ -43,7 +43,7 @@ runs:
       run: |
         aws configure set aws_access_key_id "${{ inputs.AWS_KEY_ID }}"
         aws configure set aws_secret_access_key "${{ inputs.AWS_ACCESS_KEY }}" 
-        aws s3 ls || echo "bad data / region"
+        aws s3 ls || (echo "bad aws_access_key_id / aws_secret_access_key" && exit 1 )
       
     - name: region
       shell: bash
