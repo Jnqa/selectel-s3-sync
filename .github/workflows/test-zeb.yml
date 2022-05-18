@@ -1,0 +1,55 @@
+
+name: Upload to AWS (zebra)
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - aws
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: write run-id
+        run: echo ${{ github.run_id }} >> ./lab/run-id.txt
+
+
+      - name: Sync with AWS (Up)
+        uses: Zebrainy/s3-sync-action@master
+        with:
+          dirname: lab
+          bucketname: jnqa-test
+          s3dirname: lab-test
+          AWS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          REGION: eu-north-1
+
+      
+      - name: Sync with Seleclel (Down)
+        uses: Zebrainy/s3-sync-action@master
+        with:
+          dirname: download
+          bucketname: jnqa-test
+          s3dirname: lab-test
+          FILENAME: run-id.txt
+          DOWNLOAD: true
+          AWS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          REGION: eu-north-1
+
+      - name: ls check
+        run: ls ./download/
+      
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: lab-files
+          path: download
+          retention-days: 1
