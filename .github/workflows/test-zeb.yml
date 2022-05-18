@@ -22,7 +22,7 @@ jobs:
 
 
       - name: Sync with AWS (Up)
-        uses: Zebrainy/s3-sync-action@master
+        uses: Zebrainy/s3-sync-action@main
         with:
           dirname: lab
           bucketname: jnqa-test
@@ -33,7 +33,7 @@ jobs:
 
       
       - name: Sync with Seleclel (Down)
-        uses: Zebrainy/s3-sync-action@master
+        uses: Zebrainy/s3-sync-action@main
         with:
           dirname: download
           bucketname: jnqa-test
