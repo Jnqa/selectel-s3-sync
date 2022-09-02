@@ -18,7 +18,7 @@ jobs:
       - name: Some magic
         run: |
           mkdir configs-to-upload | echo 'exists'
-          for fn in `jq -r '.configs[]' ./lab-list/configs-list.json`; do cp -r "$fn" ./configs-to-upload/; done
+          for fn in `jq -r '.configs[]' ./lab-list/configs-list.json`; do cp -r "./lab-list/$fn" ./configs-to-upload/; done
 
       - name: Sync with Seleclel (Up)
         uses: Jnqa/upload-to-s3-selectel@main
