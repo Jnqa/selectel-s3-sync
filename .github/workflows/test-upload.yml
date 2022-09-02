@@ -4,8 +4,7 @@ name: Upload to Selectel
 on:
   push:
     branches:
-      - main
-      - master
+      - test-folders
 
 
 jobs:
@@ -15,40 +14,59 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      
-      - name: write run-id
-        run: echo ${{ github.run_id }} >> ./lab/run-id.txt
 
+      - name: Some magic
+        run: |
+          mkdir configs-to-upload | echo 'exists'
+          for fn in `jq -r '.configs[]' ./lab-list/configs-list.json`; do cp -r "$fn" ./configs-to-upload/; done
 
       - name: Sync with Seleclel (Up)
         uses: Jnqa/upload-to-s3-selectel@main
         with:
-          dirname: lab
+          dirname: configs-to-upload
           bucketname: jnqa-test
-          s3dirname: lab-catalog
-          SELECTEL_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_SELECTEL }}
-          SELECTEL_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_SELECTEL }}
-          # ENDPOINT: https://s3.selcdn.ru
-          # SELECTEL_URL: https://6a39d29f-7919-4a2c-b54e-f8066f9effbb.selcdn.net--no
-
-      
-      - name: Sync with Seleclel (Down)
-        uses: Jnqa/upload-to-s3-selectel@main
-        with:
-          dirname: download
-          bucketname: jnqa-test
-          s3dirname: lab-catalog
-          FILENAME: run-id.txt
-          DOWNLOAD: true
+          s3dirname: configs
           SELECTEL_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_SELECTEL }}
           SELECTEL_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_SELECTEL }}
 
-      - name: ls check
-        run: ls ./download/
+      - name: Print URLs
+        run: |
+          array=$(find ./configs-to-upload/ -mindepth 2)
+          for i in $array; do echo "https://6a39d29f-7919-4a2c-b54e-f8066f9effbb.selcdn.net/jnqa-test/configs$(echo $i | sed -e 's/.\///')"; done
+
+      # - name: write run-id
+      #   run: echo ${{ github.run_id }} >> ./lab/run-id.txt
+
+
+      # - name: Sync with Seleclel (Up)
+      #   uses: Jnqa/upload-to-s3-selectel@main
+      #   with:
+      #     dirname: lab
+      #     bucketname: jnqa-test
+      #     s3dirname: lab-catalog
+      #     SELECTEL_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_SELECTEL }}
+      #     SELECTEL_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_SELECTEL }}
+      #     # ENDPOINT: https://s3.selcdn.ru
+      #     # SELECTEL_URL: https://6a39d29f-7919-4a2c-b54e-f8066f9effbb.selcdn.net--no
+
       
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: lab-files
-          path: download
-          retention-days: 1
+      # - name: Sync with Seleclel (Down)
+      #   uses: Jnqa/upload-to-s3-selectel@main
+      #   with:
+      #     dirname: download
+      #     bucketname: jnqa-test
+      #     s3dirname: lab-catalog
+      #     FILENAME: run-id.txt
+      #     DOWNLOAD: true
+      #     SELECTEL_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_SELECTEL }}
+      #     SELECTEL_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_SELECTEL }}
+
+      # - name: ls check
+      #   run: ls ./download/
+      
+      # - name: Archive production artifacts
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: lab-files
+      #     path: download
+      #     retention-days: 1
